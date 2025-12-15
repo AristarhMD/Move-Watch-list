@@ -28,19 +28,26 @@ header {
   background-size: cover;
   background-repeat: no-repeat;
   color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.header-nav {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-h1 {
+.header-nav h1 {
   font-size: 4rem;
   font-weight: 800;
   line-height: 24px;
   letter-spacing: -4.5%;
 }
 
-header > a {
+.header-nav > a {
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 20px;
@@ -48,21 +55,23 @@ header > a {
   text-decoration: none;
 }
 
-.input-container {
+.form-container {
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  top: 18rem;
+  left: 3.2rem;
 }
 
-.input-container i {
+.form-container i {
   color: #9ca3af;
   font-size: 1.6rem;
   margin-right: -3.2rem;
   z-index: 0;
 }
 
-.input-container input {
+.form-container input {
   padding: 1rem 17.6rem 1rem 4rem;
   font-size: 1.4rem;
   font-weight: 500;
@@ -71,9 +80,17 @@ header > a {
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
   box-shadow: 0px 1px 2px 0px #0000000d;
+
+  color: #6b7280;
+  font-size: 1.4rem;
+  font-weight: 500;
 }
 
-.input-container button {
+.form-container input:focus {
+  outline: 1px solid #aaacaf;
+}
+
+.form-container button {
   font-size: 1.4rem;
   font-weight: 500;
   font-family: inherit;
@@ -85,9 +102,12 @@ header > a {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
   box-shadow: 0px 1px 2px 0px #0000000d;
+  cursor: pointer;
+  transition: all ease-in-out;
 }
 
 main {
+  padding-top: 4rem;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -96,6 +116,7 @@ main {
   min-height: 50rem;
 }
 
+/* Default view before searching */
 .movies-container {
   text-align: center;
 }
@@ -110,4 +131,72 @@ main {
   font-weight: 700;
   line-height: 20px;
   color: #dfdddd;
+}
+
+/* Styling of the movie container after searcing */
+.movie {
+  margin: 0 4.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 1.5px solid #e5e7eb;
+  padding: 2rem 0;
+}
+
+.movie-poster {
+  width: 100px;
+}
+
+.general-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 20px;
+  margin-bottom: 1.1rem;
+}
+
+.general-title span {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.duration-and-genre {
+  display: flex;
+  align-items: center;
+}
+
+.duration-and-genre p {
+  font-size: 1rem;
+  line-height: 20px;
+  margin-bottom: 0.8rem;
+}
+
+.duration {
+  margin-right: 2rem;
+}
+
+.genre {
+  margin-right: 3rem;
+}
+
+.add-to-watchlist {
+  font-size: 1rem;
+  line-height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.add-to-watchlist span i {
+  color: #111827;
+}
+
+.movie-description {
+  font-size: 1.4rem;
+  line-height: 20px;
+  color: #6b7280;
 }
