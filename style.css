@@ -167,12 +167,12 @@ main {
 .duration-and-genre {
   display: flex;
   align-items: center;
+  margin-bottom: 0.8rem;
 }
 
 .duration-and-genre p {
   font-size: 1rem;
   line-height: 20px;
-  margin-bottom: 0.8rem;
 }
 
 .duration {
@@ -195,8 +195,23 @@ main {
   color: #111827;
 }
 
-.movie-description {
+.less-text,
+.more-text {
   font-size: 1.4rem;
   line-height: 20px;
   color: #6b7280;
+}
+
+.description-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
 }
