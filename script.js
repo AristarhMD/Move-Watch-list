@@ -1,5 +1,28 @@
 const formEl = document.querySelector(".form-container");
 const mainEl = document.querySelector("main");
+const api_key = ProcessingInstruction.env.API_KEY;
+
+const allGenres = [
+  { id: 28, name: "Action" },
+  { id: 12, name: "Adventure" },
+  { id: 16, name: "Animation" },
+  { id: 35, name: "Comedy" },
+  { id: 80, name: "Crime" },
+  { id: 99, name: "Documentary" },
+  { id: 18, name: "Drama" },
+  { id: 10751, name: "Family" },
+  { id: 14, name: "Fantasy" },
+  { id: 36, name: "History" },
+  { id: 27, name: "Horror" },
+  { id: 10402, name: "Music" },
+  { id: 9648, name: "Mystery" },
+  { id: 10749, name: "Romance" },
+  { id: 878, name: "Science Fiction" },
+  { id: 10770, name: "TV Movie" },
+  { id: 53, name: "Thriller" },
+  { id: 10752, name: "War" },
+  { id: 37, name: "Western" },
+];
 
 mainEl.addEventListener("click", (e) => {
   if (e.target.classList[0] === "read-more") {
@@ -17,6 +40,10 @@ mainEl.addEventListener("click", (e) => {
       .querySelector(".less-text")
       .classList.toggle("hidden");
   }
+
+  if (e.target.classList[0] === "add-to-watchlist") {
+    addToStorage(e);
+  }
 });
 
 formEl.addEventListener("submit", async (e) => {
@@ -32,17 +59,19 @@ formEl.addEventListener("submit", async (e) => {
 });
 
 async function getMovie(movie) {
-  const res = await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${movie}&api_key=98cf43282363c475cdae6ed924d1de80`
-  );
-  const data = await res.json();
-  return data.results;
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/search/movie?query=${movie}&include_adult=false&api_key=${api_key}`
+    );
+    const data = await res.json();
+    return data.results;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 async function generateMarkUp(movie) {
-  const firstFive = movie.slice(0, 5);
-
-  const movieWithGenre = getGenreDescription(firstFive);
+  const movieWithGenre = getGenreDescription(movie);
   const moviesWithDuration = await getDurationMovie(movieWithGenre);
 
   const generatedMarkUp = moviesWithDuration
@@ -51,6 +80,7 @@ async function generateMarkUp(movie) {
         movie.overview.length <= 130
           ? ""
           : `<button class="read-more description-btn"> ...Read More</button>`;
+
       return `
       <div class="movie">
           <img
@@ -69,7 +99,7 @@ async function generateMarkUp(movie) {
               <div class="duration-and-genre">
                   <p class="duration">${movie.duration} min</p>
                   <p class="genre">${movie.genre}</p>
-                  <button class="add-to-watchlist">
+                  <button class="add-to-watchlist" data-movie-id=${movie.id}>
                       <span>
                       <i class="fa-solid fa-circle-plus"></i>
                       </span>
@@ -81,7 +111,7 @@ async function generateMarkUp(movie) {
                 ${movie.overview.slice(0, 130)}
                 ${btn}
                 <p class="more-text hidden">${movie.overview}
-                <button class="read-less description-btn " >Read Less</button>
+                <button class="read-less description-btn">Read Less</button>
                 </p>
                 <span class="more-text hidden">${movie.overview.slice(130)} 
                 
@@ -102,7 +132,7 @@ async function getDurationMovie(movies) {
     movies.map(async (movie) => {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.id}?api_key=98cf43282363c475cdae6ed924d1de80`
+          `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${api_key}`
         );
         const data = await res.json();
         return { ...movie, duration: data.runtime };
@@ -115,28 +145,6 @@ async function getDurationMovie(movies) {
 }
 
 function getGenreDescription(movies) {
-  const allGenres = [
-    { id: 28, name: "Action" },
-    { id: 12, name: "Adventure" },
-    { id: 16, name: "Animation" },
-    { id: 35, name: "Comedy" },
-    { id: 80, name: "Crime" },
-    { id: 99, name: "Documentary" },
-    { id: 18, name: "Drama" },
-    { id: 10751, name: "Family" },
-    { id: 14, name: "Fantasy" },
-    { id: 36, name: "History" },
-    { id: 27, name: "Horror" },
-    { id: 10402, name: "Music" },
-    { id: 9648, name: "Mystery" },
-    { id: 10749, name: "Romance" },
-    { id: 878, name: "Science Fiction" },
-    { id: 10770, name: "TV Movie" },
-    { id: 53, name: "Thriller" },
-    { id: 10752, name: "War" },
-    { id: 37, name: "Western" },
-  ];
-
   const moviesWithGenres = movies.map((movie) => {
     const movieGenre = allGenres
       .filter((genres) => movie.genre_ids.includes(genres.id))
@@ -146,4 +154,30 @@ function getGenreDescription(movies) {
   });
 
   return moviesWithGenres;
+}
+
+async function addToStorage(e) {
+  const id = e.target.dataset.movieId;
+
+  let initialStorage = JSON.parse(localStorage.getItem("watchlist")) || [];
+
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${api_key}`
+    );
+    const data = await res.json();
+
+    const genre = data.genres.map((genreObj) => genreObj.name).join(", ");
+    const movieData = {
+      ...data,
+      duration: data.runtime,
+      genre: genre,
+    };
+
+    initialStorage.push(movieData);
+
+    localStorage.setItem("watchlist", JSON.stringify(initialStorage));
+  } catch (err) {
+    console.error(err);
+  }
 }
